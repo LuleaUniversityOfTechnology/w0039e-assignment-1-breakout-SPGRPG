@@ -8,6 +8,11 @@ void StepFrame(float elapsedTime);
 void SetupScene();
 void CollisionBall();
 void MoveBall();
-void CollidingBB();
+void CollidingBB(float elapsedTime);
+void DrawHighScore();
+void createvalues();
+void fileload();
+int arrcount();
+extern int mainscore;
 
 
