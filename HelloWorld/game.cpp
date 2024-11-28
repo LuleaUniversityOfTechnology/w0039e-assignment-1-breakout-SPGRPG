@@ -11,39 +11,52 @@
 #include <string>
 
 const float ballSpeed = 3.2f;
-paddle pad123;
-int a = 0;
+paddle paddle123;
+int arraycount = 0;
 
-int arrmeasure()
+int* arrint;
+
+int* arrcounting(int arraycount)
 {
-	string newline;
-	ifstream myfile("example.txt");
-	a = 0;
-	if (myfile.is_open())
+	return new int[arraycount];
+}
+
+void create_del_arr()
+{
+	arraycount = countlines();
+	
+	if (arraycount == 0)
 	{
-		while (getline(myfile, newline))
-		{
-			a = a + 1;
-		}
-		myfile.close();
+		create_arr();
 	}
-	return a;
+	else
+	{
+		delete[] arrint;
+		arrint = arrcounting(arraycount);
+	}
 }
 
-int* arrcount(int z)
+void create_arr()
 {
-	return new int[z];
+	arrint = new int[5];
+	for (int i = 0; i < 5; i++)
+	{
+		arrint[i] = 0;
+	}
+	arraycount = 5;
+
 }
 
-int z = arrmeasure();
-int* arrint = arrcount(z);
+
+
+int mainscore = 0;
+
 void createvalues()
 {
 	if (arrint != 0) {
 		fileload();
 	}
 }
-int mainscore = 0;
 
 void StepFrame(float elapsedTime)
 {
@@ -63,8 +76,8 @@ void StepFrame(float elapsedTime)
 		Play::DrawObject(brick123);
 	}
 	CollidingBB(elapsedTime);
-	DrawPaddle(pad123);
-	UpdatePaddle(pad123);
+	DrawPaddle(paddle123);
+	UpdatePaddle(paddle123);
 	for (int i = 0; i < ballIds.size(); i++)
 	{
 		Play::GameObject& ball123 = Play::GetGameObject(ballIds[i]);
@@ -122,7 +135,7 @@ void CollisionBall()
 		{
 			ball.velocity.y = -ball.velocity.y;
 		}
-		else if (isColliding(ball, pad123) == true)
+		else if (isColliding(ball, paddle123) == true)
 		{
 			ball.velocity.y = -ball.velocity.y;
 		}
@@ -155,75 +168,9 @@ void CollidingBB(float elapsedTime)
 				ball123.velocity.y = -ball123.velocity.y;
 				mainscore = mainscore + 1;
 			}
-			if (ball123.pos.y < 50)
-			{
-				for (int o = 0; o < z; o++)
-				{
-					if (mainscore >= arrint[o])
-					{
-						int* newarrint = arrcount(z+1);
-						for (int p = z-1; p >= 0 ; p--) 
-						{
-							if (p == o) 
-							{
-								newarrint[p + 1] = arrint[p];
-								newarrint[o] = mainscore;
-								continue;
-							}
-							else if(p>o)
-							{
-								newarrint[p+1] = arrint[p];
-							}
-							else
-							{
-								newarrint[p] = arrint[p];
-							}
-						}
-						ofstream myfile;
-						myfile.open("example.txt");
-						for (int i = 0; i < z+1; i = i + 1)
-						{
-							std::string str = to_string(newarrint[i]);
-							myfile << str << "\n";
-						}
-						myfile.close();
-						z = arrmeasure();
-						mainscore = 0;
-						DestroyAllGameObjects();
-						fileload();
-						SpawnBall();
-						SetupScene();
-						StepFrame(elapsedTime);
-						break;
-					}
-					else if (mainscore < arrint[z-1]) 
-					{
-						int* newarrint = arrcount(z+1);
-						for (int p = z-1; p >= 0; p--)
-						{
-							newarrint[p] = arrint[p];
-						}
-						newarrint[z] = mainscore;
-						ofstream myfile;
-						myfile.open("example.txt");
-						for (int i = 0; i < z+1; i = i + 1)
-						{
-							std::string str = to_string(newarrint[i]);
-							myfile << str << "\n";
-						}
-						myfile.close();
-						z=arrmeasure();
-						mainscore = 0;
-						DestroyAllGameObjects();
-						fileload();
-						SpawnBall();
-						SetupScene();
-						StepFrame(elapsedTime);
-						break;
-					}
-				}
-				
-				
+			else if (ball123.pos.y < 50)
+			{	
+				reset(elapsedTime);
 			}
 		}
 	}
@@ -255,4 +202,93 @@ void fileload()
 }
 
 
+void reset(float elapsedTime)
+{
+	for (int a = 0; a < arraycount; a++)
+	{
+		if (mainscore >= arrint[a])
+		{
+			int* newarrint = arrcounting(arraycount + 1);
+			for (int b = arraycount - 1; b >= 0; b--)
+			{
+				if (b == a)
+				{
+					newarrint[b + 1] = arrint[b];
+					newarrint[a] = mainscore;
+					continue;
+				}
+				else if (b > a)
+				{
+					newarrint[b + 1] = arrint[b];
+				}
+				else
+				{
+					newarrint[b] = arrint[b];
+				}
+			}
+			delete[] arrint;
+			arrint = newarrint;
+			ofstream myfile;
+			myfile.open("example.txt");
+			for (int i = 0; i < arraycount + 1; i = i + 1)
+			{
+				std::string str = to_string(newarrint[i]);
+				myfile << str << "\n";
+			}
+			myfile.close();
+			create_del_arr();
+			mainscore = 0;
+			DestroyAllGameObjects();
+			fileload();
+			SpawnBall();
+			SetupScene();
+			StepFrame(elapsedTime);
+			break;
+		}
+		else if (mainscore < arrint[arraycount - 1])
+		{
+			int* newarrint = arrcounting(arraycount + 1);
+			for (int b = arraycount - 1; b >= 0; b--)
+			{
+				newarrint[b] = arrint[b];
+			}
+			newarrint[arraycount] = mainscore;
+			ofstream myfile;
+			myfile.open("example.txt");
+			for (int i = 0; i < arraycount + 1; i = i + 1)
+			{
+				std::string str = to_string(newarrint[i]);
+				myfile << str << "\n";
+			}
+			myfile.close();
+			create_del_arr();
+			mainscore = 0;
+			DestroyAllGameObjects();
+			fileload();
+			SpawnBall();
+			SetupScene();
+			StepFrame(elapsedTime);
+			break;
+		}
+	}
+}
+void deletearr()
+{
+	delete[] arrint;
+}
+int countlines()
+{
+	string newline;
+	ifstream myfile("example.txt");
+
+	if (myfile.is_open())
+	{
+		while (getline(myfile, newline))
+		{
+			arraycount = arraycount + 1;
+		}
+		myfile.close();
+	}
+	return arraycount;
+}
 

@@ -1,28 +1,28 @@
 #include "game.h"
 #include "paddle.h"
 
-void DrawPaddle(paddle& p)
+void DrawPaddle(paddle& paddle)
 {
-	Play::DrawRect(p.position, p.position + Play::Point2D{ 150, 20 }, Play::cBlue, true);
+	Play::DrawRect(paddle.position, paddle.position + Play::Point2D{ 150, 20 }, Play::cBlue, true);
 
 }
-void UpdatePaddle(paddle& p)
+void UpdatePaddle(paddle& paddle)
 {
-	p.botRight = p.position + Play::Point2D{150,0};
-	p.topLeft = p.position + Play::Point2D{ 0, 20 };
+	paddle.botRight = paddle.position + Play::Point2D{150,0};
+	paddle.topLeft = paddle.position + Play::Point2D{ 0, 20 };
 	if (Play::KeyDown(Play::KeyboardButton::KEY_LEFT))
 	{
-		p.position += -p.velocity;
+		paddle.position += -paddle.velocity;
 	}
 	else if (Play::KeyDown(Play::KeyboardButton::KEY_RIGHT))
 	{
-		p.position += p.velocity;
+		paddle.position += paddle.velocity;
 	}
 }
-bool isColliding(Play::GameObject& obj, paddle& p)
+bool isColliding(Play::GameObject& obj, paddle& paddle)
 {
-	const float dx = obj.pos.x - Max(p.topLeft.x, Min(obj.pos.x, p.botRight.x));
-	const float dy = obj.pos.y - Max(p.topLeft.y, Min(obj.pos.y, p.botRight.y));
+	const float dx = obj.pos.x - Max(paddle.topLeft.x, Min(obj.pos.x, paddle.botRight.x));
+	const float dy = obj.pos.y - Max(paddle.topLeft.y, Min(obj.pos.y, paddle.botRight.y));
 	bool isCol = (dx * dx + dy * dy) < (obj.radius * obj.radius);
 	return isCol;
 }
@@ -38,15 +38,15 @@ float Min(float a, float b)
 		return a;
 	}
 }
-float Max(float idknum1, float idknum2)
+float Max(float a, float b)
 {
-	if (idknum1 > idknum2)
+	if (a > b)
 	{
-		return idknum1;
+		return a;
 	}
 
-	else if (idknum1 < idknum2)
+	else if (a< b)
 	{
-		return idknum2;
+		return b;
 	}
 }

@@ -12,7 +12,11 @@ void CollidingBB(float elapsedTime);
 void DrawHighScore();
 void createvalues();
 void fileload();
-int arrcount();
+void create_del_arr();
+void create_arr();
+void reset(float elapsedTime);
 extern int mainscore;
+void deletearr();
+int countlines();
 
 

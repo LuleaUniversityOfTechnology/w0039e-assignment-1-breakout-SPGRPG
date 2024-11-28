@@ -4,7 +4,7 @@
 void MainGameEntry( PLAY_IGNORE_COMMAND_LINE )
 {
 	Play::CreateManager( DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_SCALE );
-	fileload();
+	create_del_arr();
 	SpawnBall();
 	SetupScene();
 	createvalues();
@@ -23,6 +23,8 @@ bool MainGameUpdate( float elapsedTime )
 // Gets called once when the player quits the game 
 int MainGameExit( void )
 {
+	
+	deletearr();
 	Play::DestroyManager();
 	return PLAY_OK;
 }
