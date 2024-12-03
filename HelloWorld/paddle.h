@@ -15,3 +15,4 @@ void UpdatePaddle(paddle& p);
 bool isColliding(Play::GameObject& obj,paddle& p);
 float Min(float a, float b);
 float Max(float idknum1,float idknum2);
+void paddlecollision(paddle& paddle);

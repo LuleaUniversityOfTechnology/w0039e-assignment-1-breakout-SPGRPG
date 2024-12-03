@@ -18,6 +18,9 @@ void UpdatePaddle(paddle& paddle)
 	{
 		paddle.position += paddle.velocity;
 	}
+	paddlecollision(paddle);
+	
+	
 }
 bool isColliding(Play::GameObject& obj, paddle& paddle)
 {
@@ -29,24 +32,20 @@ bool isColliding(Play::GameObject& obj, paddle& paddle)
 
 float Min(float a, float b)
 {
-	if (a> b)
-	{
-		return b;
-	}
-	else if (a< b)
-	{
-		return a;
-	}
+	return (a>b) ? b : a;
 }
 float Max(float a, float b)
 {
-	if (a > b)
+	return (a > b) ? a : b;
+}
+void paddlecollision(paddle& paddle)
+{
+	if (paddle.topLeft.x<0)
 	{
-		return a;
+		paddle.position.x += paddle.velocity.x;
 	}
-
-	else if (a< b)
+	else if (paddle.botRight.x > DISPLAY_WIDTH)
 	{
-		return b;
+		paddle.position.x -= paddle.velocity.x;
 	}
 }

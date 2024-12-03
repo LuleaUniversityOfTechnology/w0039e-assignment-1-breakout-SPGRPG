@@ -16,6 +16,35 @@ int arraycount = 0;
 
 int* arrint;
 
+void create_arr()
+{
+	arrint = new int[5];
+	for (int i = 0; i < 5; i++)
+	{
+		arrint[i] = 0;
+	}
+	arraycount = 5;
+
+}
+int countlines()
+{
+	arraycount = 0;
+	string newline;
+	ifstream myfile("example.txt");
+
+	if (myfile.is_open())
+	{
+		
+		while (getline(myfile, newline))
+		{
+			arraycount = arraycount + 1;
+		}
+		myfile.close();
+	}
+	return arraycount;
+}
+
+
 int* arrcounting(int arraycount)
 {
 	return new int[arraycount];
@@ -31,32 +60,11 @@ void create_del_arr()
 	}
 	else
 	{
-		delete[] arrint;
-		arrint = arrcounting(arraycount);
-	}
-}
-
-void create_arr()
-{
-	arrint = new int[5];
-	for (int i = 0; i < 5; i++)
-	{
-		arrint[i] = 0;
-	}
-	arraycount = 5;
-
-}
-
-
-
-int mainscore = 0;
-
-void createvalues()
-{
-	if (arrint != 0) {
 		fileload();
 	}
 }
+
+int mainscore = 0;
 
 void StepFrame(float elapsedTime)
 {
@@ -187,6 +195,7 @@ void DrawHighScore()
 }
 void fileload()
 {
+	int* newarrint = new int[arraycount];
 	string newline;
 	ifstream myfile("example.txt");
 	if (myfile.is_open())
@@ -194,13 +203,14 @@ void fileload()
 		int t = 0;
 		while(getline(myfile, newline))
 		{
-			arrint[t] = stoi(newline);
+			newarrint[t] = stoi(newline);
 			t = t + 1;
 		}
 		myfile.close();
 	}
+	delete[] arrint;
+	arrint = newarrint;
 }
-
 
 void reset(float elapsedTime)
 {
@@ -208,65 +218,15 @@ void reset(float elapsedTime)
 	{
 		if (mainscore >= arrint[a])
 		{
-			int* newarrint = arrcounting(arraycount + 1);
-			for (int b = arraycount - 1; b >= 0; b--)
-			{
-				if (b == a)
-				{
-					newarrint[b + 1] = arrint[b];
-					newarrint[a] = mainscore;
-					continue;
-				}
-				else if (b > a)
-				{
-					newarrint[b + 1] = arrint[b];
-				}
-				else
-				{
-					newarrint[b] = arrint[b];
-				}
-			}
-			delete[] arrint;
-			arrint = newarrint;
-			ofstream myfile;
-			myfile.open("example.txt");
-			for (int i = 0; i < arraycount + 1; i = i + 1)
-			{
-				std::string str = to_string(newarrint[i]);
-				myfile << str << "\n";
-			}
-			myfile.close();
-			create_del_arr();
-			mainscore = 0;
-			DestroyAllGameObjects();
-			fileload();
-			SpawnBall();
-			SetupScene();
+			movingarrbetween(a);
+			resetall();
 			StepFrame(elapsedTime);
 			break;
 		}
 		else if (mainscore < arrint[arraycount - 1])
 		{
-			int* newarrint = arrcounting(arraycount + 1);
-			for (int b = arraycount - 1; b >= 0; b--)
-			{
-				newarrint[b] = arrint[b];
-			}
-			newarrint[arraycount] = mainscore;
-			ofstream myfile;
-			myfile.open("example.txt");
-			for (int i = 0; i < arraycount + 1; i = i + 1)
-			{
-				std::string str = to_string(newarrint[i]);
-				myfile << str << "\n";
-			}
-			myfile.close();
-			create_del_arr();
-			mainscore = 0;
-			DestroyAllGameObjects();
-			fileload();
-			SpawnBall();
-			SetupScene();
+			movingarrback(a);
+			resetall();
 			StepFrame(elapsedTime);
 			break;
 		}
@@ -276,19 +236,59 @@ void deletearr()
 {
 	delete[] arrint;
 }
-int countlines()
+void resetall()
 {
-	string newline;
-	ifstream myfile("example.txt");
-
-	if (myfile.is_open())
-	{
-		while (getline(myfile, newline))
-		{
-			arraycount = arraycount + 1;
-		}
-		myfile.close();
-	}
-	return arraycount;
+	mainscore = 0;
+	DestroyAllGameObjects();
+	SpawnBall();
+	SetupScene();
 }
-
+void filesave()
+{
+	ofstream myfile;
+	myfile.open("example.txt");
+	for (int i = 0; i < arraycount ; i = i + 1)
+	{
+		std::string str = to_string(arrint[i]);
+		myfile << str << "\n";
+	}
+	myfile.close();
+}
+void movingarrbetween(int a)
+{
+	arraycount += 1;
+	int* newarrint = arrcounting(arraycount);
+	for (int b = arraycount - 2; b >= 0; b--)
+	{
+		if (b == a)
+		{
+			newarrint[b + 1] = arrint[b];
+			newarrint[a] = mainscore;
+			continue;
+		}
+		else if (b > a)
+		{
+			newarrint[b + 1] = arrint[b];
+		}
+		else
+		{
+			newarrint[b] = arrint[b];
+		}
+	}
+	delete[] arrint;
+	arrint = newarrint;
+	mainscore = 0;
+}
+void movingarrback(int a)
+{
+	arraycount += 1;
+	int* newarrint = arrcounting(arraycount);
+	for (int b = arraycount - 2; b >= 0; b--)
+	{
+		newarrint[b] = arrint[b];
+	}
+	newarrint[arraycount-1] = mainscore;
+	delete[] arrint;
+	arrint = newarrint;
+	mainscore = 0;
+}
