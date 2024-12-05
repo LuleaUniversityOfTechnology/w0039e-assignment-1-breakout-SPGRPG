@@ -98,8 +98,6 @@ void StepFrame(float elapsedTime)
 void SetupScene()
 {
 
-
-
 	for (int x = 1; x < DISPLAY_WIDTH - 18; x = x + 18)
 	{
 		for (int y = 200; y < DISPLAY_HEIGHT - 12; y = y + 12)
@@ -214,23 +212,10 @@ void fileload()
 
 void reset(float elapsedTime)
 {
-	for (int a = 0; a < arraycount; a++)
-	{
-		if (mainscore >= arrint[a])
-		{
-			movingarrbetween(a);
+
+			movingarrbetween();
 			resetall();
 			StepFrame(elapsedTime);
-			break;
-		}
-		else if (mainscore < arrint[arraycount - 1])
-		{
-			movingarrback(a);
-			resetall();
-			StepFrame(elapsedTime);
-			break;
-		}
-	}
 }
 void deletearr()
 {
@@ -254,40 +239,26 @@ void filesave()
 	}
 	myfile.close();
 }
-void movingarrbetween(int a)
+void movingarrbetween()
 {
 	arraycount += 1;
 	int* newarrint = arrcounting(arraycount);
-	for (int b = arraycount - 2; b >= 0; b--)
+	int i = 0;
+	arrint; newarrint; mainscore;
+	while (arrint[i] > mainscore)
 	{
-		if (b == a)
-		{
-			newarrint[b + 1] = arrint[b];
-			newarrint[a] = mainscore;
-			continue;
-		}
-		else if (b > a)
-		{
-			newarrint[b + 1] = arrint[b];
-		}
-		else
-		{
-			newarrint[b] = arrint[b];
-		}
+		newarrint[i] = arrint[i];
+		i++;
 	}
-	delete[] arrint;
-	arrint = newarrint;
-	mainscore = 0;
-}
-void movingarrback(int a)
-{
-	arraycount += 1;
-	int* newarrint = arrcounting(arraycount);
-	for (int b = arraycount - 2; b >= 0; b--)
+	newarrint[i] = mainscore;
+	i++;
+
+	while (i < arraycount)
 	{
-		newarrint[b] = arrint[b];
+		newarrint[i] = arrint[i - 1];
+		i++;
 	}
-	newarrint[arraycount-1] = mainscore;
+
 	delete[] arrint;
 	arrint = newarrint;
 	mainscore = 0;

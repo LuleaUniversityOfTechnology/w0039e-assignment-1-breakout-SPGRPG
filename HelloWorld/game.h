@@ -19,7 +19,7 @@ void deletearr();
 int countlines();
 void resetall();
 void filesave();
-void movingarrbetween(int a);
+void movingarrbetween();
 void movingarrback(int a);
 
 
